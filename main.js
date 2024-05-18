@@ -1,10 +1,11 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
+import axios from 'axios'; // Importar axios correctamente
+import cheerio from 'cheerio'; // Importar cheerio correctamente
 
 const url = 'https://superastro.com.co/historico.php';
 
-axios.get(url)
-  .then(response => {
+export const Data = async (url) => {
+  try {
+    const response = await axios.get(url);
     const html = response.data;
     const $ = cheerio.load(html);
 
@@ -25,18 +26,24 @@ axios.get(url)
         const numero = $astroLuna(element).find('td').eq(1).text().trim();
         const signo = $astroLuna(element).find('td').eq(2).text().trim();
         const sorteo = $astroLuna(element).find('td').eq(3).text().trim();
-        
+
         data.push({ fecha, numero, signo, sorteo });
       });
 
       console.log('Datos extraídos:');
       console.log(data);
+
+      return data;
     } else {
       console.log('No se encontró el enlace para "astro LUNA"');
+      return [];
     }
-  })
-  .catch(error => {
+  } catch (error) {
     console.error('Error al hacer la solicitud:', error);
-  });
+    return [];
+  }
+};
+
+
 
 
